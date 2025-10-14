@@ -23,14 +23,15 @@ public final class Price {
     public Price(Long id, Long brandId, LocalDateTime startDate, LocalDateTime endDate,
                  Long priceList, Long productId, Integer priority, BigDecimal price, String currency) {
 
-        validateNotNull(brandId, "brandId");
-        validateNotNull(startDate, "startDate");
-        validateNotNull(endDate, "endDate");
-        validateNotNull(priceList, "priceList");
-        validateNotNull(productId, "productId");
-        validateNotNull(priority, "priority");
-        validateNotNull(price, "price");
-        validateNotNull(currency, "currency");
+        this.id = id;
+        this.brandId = Objects.requireNonNull(brandId, "brandId cannot be null");
+        this.startDate = Objects.requireNonNull(startDate, "startDate cannot be null");
+        this.endDate = Objects.requireNonNull(endDate, "endDate cannot be null");
+        this.priceList = Objects.requireNonNull(priceList, "priceList cannot be null");
+        this.productId = Objects.requireNonNull(productId, "productId cannot be null");
+        this.priority = Objects.requireNonNull(priority, "priority cannot be null");
+        this.price = Objects.requireNonNull(price, "price cannot be null");
+        this.currency = Objects.requireNonNull(currency, "currency cannot be null");
 
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("startDate must be before endDate");
@@ -42,22 +43,6 @@ public final class Price {
 
         if (priority < 0) {
             throw new IllegalArgumentException("priority cannot be negative");
-        }
-
-        this.id = id;
-        this.brandId = brandId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.priceList = priceList;
-        this.productId = productId;
-        this.priority = priority;
-        this.price = price;
-        this.currency = currency;
-    }
-
-    private void validateNotNull(Object value, String fieldName) {
-        if (value == null) {
-            throw new IllegalArgumentException(fieldName + " cannot be null");
         }
     }
 
@@ -83,7 +68,7 @@ public final class Price {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (Objects.isNull(o) || getClass() != o.getClass()) return false;
         Price price = (Price) o;
         return Objects.equals(id, price.id);
     }
