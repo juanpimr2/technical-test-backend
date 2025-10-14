@@ -1,0 +1,360 @@
+﻿{
+"info": {
+"_postman_id": "technical-test-inditex-2025",
+"name": "Technical Test - Inditex Backend API",
+"description": "Collection with automated tests for the 5 required test cases from Inditex technical test",
+"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+},
+"item": [
+{
+"name": "Test 1 - Day 14 at 10:00",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 200\", function () {",
+"    pm.response.to.have.status(200);",
+"});",
+"",
+"pm.test(\"Response has correct structure\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData).to.have.property('productId');",
+"    pm.expect(jsonData).to.have.property('brandId');",
+"    pm.expect(jsonData).to.have.property('priceList');",
+"    pm.expect(jsonData).to.have.property('startDate');",
+"    pm.expect(jsonData).to.have.property('endDate');",
+"    pm.expect(jsonData).to.have.property('price');",
+"    pm.expect(jsonData).to.have.property('currency');",
+"});",
+"",
+"pm.test(\"Product ID is 35455\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.productId).to.eql(35455);",
+"});",
+"",
+"pm.test(\"Brand ID is 1 (ZARA)\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.brandId).to.eql(1);",
+"});",
+"",
+"pm.test(\"Price list is 1\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.priceList).to.eql(1);",
+"});",
+"",
+"pm.test(\"Price is 35.50 EUR\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.price).to.eql(35.50);",
+"    pm.expect(jsonData.currency).to.eql('EUR');",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-14T10:00:00&productId=35455&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-14T10:00:00",
+"description": "Application date (ISO format)"
+},
+{
+"key": "productId",
+"value": "35455",
+"description": "Product identifier"
+},
+{
+"key": "brandId",
+"value": "1",
+"description": "Brand identifier (1 = ZARA)"
+}
+]
+},
+"description": "Test 1: Request at 10:00 on day 14 for product 35455 and brand 1 (ZARA). Expected: price list 1, price 35.50 EUR"
+},
+"response": []
+},
+{
+"name": "Test 2 - Day 14 at 16:00",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 200\", function () {",
+"    pm.response.to.have.status(200);",
+"});",
+"",
+"pm.test(\"Price list is 2 (higher priority)\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.priceList).to.eql(2);",
+"});",
+"",
+"pm.test(\"Price is 25.45 EUR\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.price).to.eql(25.45);",
+"    pm.expect(jsonData.currency).to.eql('EUR');",
+"});",
+"",
+"pm.test(\"Date range is correct\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.startDate).to.eql('2020-06-14T15:00:00');",
+"    pm.expect(jsonData.endDate).to.eql('2020-06-14T18:30:00');",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-14T16:00:00&productId=35455&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-14T16:00:00"
+},
+{
+"key": "productId",
+"value": "35455"
+},
+{
+"key": "brandId",
+"value": "1"
+}
+]
+},
+"description": "Test 2: Request at 16:00 on day 14 for product 35455 and brand 1 (ZARA). Expected: price list 2, price 25.45 EUR (priority 1 selected over priority 0)"
+},
+"response": []
+},
+{
+"name": "Test 3 - Day 14 at 21:00",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 200\", function () {",
+"    pm.response.to.have.status(200);",
+"});",
+"",
+"pm.test(\"Price list is 1\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.priceList).to.eql(1);",
+"});",
+"",
+"pm.test(\"Price is 35.50 EUR\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.price).to.eql(35.50);",
+"    pm.expect(jsonData.currency).to.eql('EUR');",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-14T21:00:00&productId=35455&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-14T21:00:00"
+},
+{
+"key": "productId",
+"value": "35455"
+},
+{
+"key": "brandId",
+"value": "1"
+}
+]
+},
+"description": "Test 3: Request at 21:00 on day 14 for product 35455 and brand 1 (ZARA). Expected: price list 1, price 35.50 EUR"
+},
+"response": []
+},
+{
+"name": "Test 4 - Day 15 at 10:00",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 200\", function () {",
+"    pm.response.to.have.status(200);",
+"});",
+"",
+"pm.test(\"Price list is 3 (higher priority)\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.priceList).to.eql(3);",
+"});",
+"",
+"pm.test(\"Price is 30.50 EUR\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.price).to.eql(30.50);",
+"    pm.expect(jsonData.currency).to.eql('EUR');",
+"});",
+"",
+"pm.test(\"Date range is correct\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.startDate).to.eql('2020-06-15T00:00:00');",
+"    pm.expect(jsonData.endDate).to.eql('2020-06-15T11:00:00');",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-15T10:00:00&productId=35455&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-15T10:00:00"
+},
+{
+"key": "productId",
+"value": "35455"
+},
+{
+"key": "brandId",
+"value": "1"
+}
+]
+},
+"description": "Test 4: Request at 10:00 on day 15 for product 35455 and brand 1 (ZARA). Expected: price list 3, price 30.50 EUR (priority 1 selected over priority 0)"
+},
+"response": []
+},
+{
+"name": "Test 5 - Day 16 at 21:00",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 200\", function () {",
+"    pm.response.to.have.status(200);",
+"});",
+"",
+"pm.test(\"Price list is 4 (higher priority)\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.priceList).to.eql(4);",
+"});",
+"",
+"pm.test(\"Price is 38.95 EUR\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.price).to.eql(38.95);",
+"    pm.expect(jsonData.currency).to.eql('EUR');",
+"});",
+"",
+"pm.test(\"Date range is correct\", function () {",
+"    var jsonData = pm.response.json();",
+"    pm.expect(jsonData.startDate).to.eql('2020-06-15T16:00:00');",
+"    pm.expect(jsonData.endDate).to.eql('2020-12-31T23:59:59');",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-16T21:00:00&productId=35455&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-16T21:00:00"
+},
+{
+"key": "productId",
+"value": "35455"
+},
+{
+"key": "brandId",
+"value": "1"
+}
+]
+},
+"description": "Test 5: Request at 21:00 on day 16 for product 35455 and brand 1 (ZARA). Expected: price list 4, price 38.95 EUR (priority 1 selected over priority 0)"
+},
+"response": []
+},
+{
+"name": "Error Case - Product Not Found",
+"event": [
+{
+"listen": "test",
+"script": {
+"exec": [
+"pm.test(\"Status code is 404\", function () {",
+"    pm.response.to.have.status(404);",
+"});"
+],
+"type": "text/javascript"
+}
+}
+],
+"request": {
+"method": "GET",
+"header": [],
+"url": {
+"raw": "{{baseUrl}}/api/prices?applicationDate=2020-06-14T10:00:00&productId=99999&brandId=1",
+"host": ["{{baseUrl}}"],
+"path": ["api", "prices"],
+"query": [
+{
+"key": "applicationDate",
+"value": "2020-06-14T10:00:00"
+},
+{
+"key": "productId",
+"value": "99999"
+},
+{
+"key": "brandId",
+"value": "1"
+}
+]
+},
+"description": "Test error case: Non-existent product should return 404"
+},
+"response": []
+}
+],
+"variable": [
+{
+"key": "baseUrl",
+"value": "http://localhost:8080",
+"type": "string"
+}
+]
+}
