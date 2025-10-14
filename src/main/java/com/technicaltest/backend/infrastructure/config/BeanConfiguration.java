@@ -1,6 +1,7 @@
 package com.technicaltest.backend.infrastructure.config;
 
 import com.technicaltest.backend.application.service.GetApplicablePriceUseCase;
+import com.technicaltest.backend.domain.port.in.GetApplicablePricePort;
 import com.technicaltest.backend.domain.port.out.PriceRepositoryPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,14 +14,14 @@ import org.springframework.context.annotation.Configuration;
 public class BeanConfiguration {
 
     /**
-     * Creates the GetApplicablePriceUseCase bean.
-     * The repository port is automatically injected by Spring (via the Adapter).
+     * Creates the GetApplicablePricePort bean.
+     * Returns the interface to promote loose coupling.
      *
      * @param priceRepositoryPort implementation of the repository port
-     * @return configured use case instance
+     * @return configured use case instance as port interface
      */
     @Bean
-    public GetApplicablePriceUseCase getApplicablePriceUseCase(PriceRepositoryPort priceRepositoryPort) {
+    public GetApplicablePricePort getApplicablePricePort(PriceRepositoryPort priceRepositoryPort) {
         return new GetApplicablePriceUseCase(priceRepositoryPort);
     }
 }

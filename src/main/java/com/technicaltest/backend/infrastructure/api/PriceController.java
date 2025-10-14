@@ -1,8 +1,8 @@
 package com.technicaltest.backend.infrastructure.api;
 
 import com.technicaltest.backend.application.dto.PriceResponseDto;
-import com.technicaltest.backend.application.service.GetApplicablePriceUseCase;
 import com.technicaltest.backend.domain.model.Price;
+import com.technicaltest.backend.domain.port.in.GetApplicablePricePort;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,12 +26,12 @@ import java.util.Objects;
 @Tag(name = "Prices", description = "Price query operations")
 public class PriceController {
 
-    private final GetApplicablePriceUseCase getApplicablePriceUseCase;
+    private final GetApplicablePricePort getApplicablePricePort;
 
-    public PriceController(GetApplicablePriceUseCase getApplicablePriceUseCase) {
-        this.getApplicablePriceUseCase = Objects.requireNonNull(
-                getApplicablePriceUseCase,
-                "getApplicablePriceUseCase cannot be null"
+    public PriceController(GetApplicablePricePort getApplicablePricePort) {
+        this.getApplicablePricePort = Objects.requireNonNull(
+                getApplicablePricePort,
+                "getApplicablePricePort cannot be null"
         );
     }
 
@@ -73,7 +73,7 @@ public class PriceController {
             @RequestParam("brandId")
             Long brandId
     ) {
-        return getApplicablePriceUseCase
+        return getApplicablePricePort
                 .execute(productId, brandId, applicationDate)
                 .map(this::mapToDto)
                 .map(ResponseEntity::ok)
