@@ -353,7 +353,7 @@ refactor: add input port interface for hexagonal architecture compliance
 
 ## 👤 Author
 
-**Juan Pablo Mejía**
+**Juan Pablo Moreno**
 
 - GitHub: [@juanpimr2](https://github.com/juanpimr2)
 - Repository: [technical-test-backend](https://github.com/juanpimr2/technical-test-backend)
