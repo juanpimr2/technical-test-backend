@@ -3,7 +3,7 @@
 > Hexagonal Architecture | Spring Boot 3 | Java 17 | REST API
 
 [![Build](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/juanpimr2/technical-test-backend)
-[![Tests](https://img.shields.io/badge/tests-35%20passing-brightgreen)](https://github.com/juanpimr2/technical-test-backend)
+[![Tests](https://img.shields.io/badge/tests-45%20passing-brightgreen)](https://github.com/juanpimr2/technical-test-backend)
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.0-brightgreen)](https://spring.io/projects/spring-boot)
 
@@ -17,7 +17,7 @@ REST API service for querying product prices with priority-based selection logic
 - ✅ **Priority-Based Selection**: Automatically selects highest priority when multiple prices match
 - ✅ **RESTful API**: Clean REST endpoints with proper HTTP status codes
 - ✅ **Swagger Documentation**: Interactive API documentation with OpenAPI 3.0
-- ✅ **Comprehensive Testing**: 35+ tests (unit, integration, E2E with Postman)
+- ✅ **Comprehensive Testing**: 45+ tests (unit, integration, E2E with Postman)
 - ✅ **Clean Architecture**: Framework-independent domain layer with SOLID principles
 
 ---
@@ -105,7 +105,7 @@ curl "http://localhost:8080/api/prices?applicationDate=2020-06-14T16:00:00&produ
 
 ### Run All Tests
 ```bash
-# Execute all 35 tests
+# Execute all 45 tests
 mvn test
 
 # Run specific test class
@@ -116,10 +116,11 @@ mvn test -Dtest=PriceControllerTest
 - **10** Unit tests (Domain layer)
 - **7** Unit tests (Application layer with mocks)
 - **8** Integration tests (Repository layer)
-- **7** Integration tests (End-to-end)
+- **7** Integration tests (End-to-end use case)
+- **10** Integration tests (REST Controller)
 - **3** Additional tests (Context, Cache)
 
-**Total: 35 tests | 100% passing ✅**
+**Total: 45 tests | 100% passing ✅**
 
 ### Postman Collection
 End-to-end API testing with automated assertions:
@@ -143,54 +144,108 @@ End-to-end API testing with automated assertions:
 
 This project follows **Hexagonal Architecture** (Ports & Adapters) with strict separation of concerns:
 ```
-┌─────────────────────────────────────────────────────┐
-│            Infrastructure Layer                     │
-│  ┌──────────────┐  ┌────────────┐  ┌────────────┐ │
-│  │ REST API     │  │  Database  │  │   Config   │ │
-│  │ (Controller) │  │ (JPA/H2)   │  │  (Spring)  │ │
-│  └──────────────┘  └────────────┘  └────────────┘ │
-└────────────────────┬────────────────────────────────┘
-                     │ Ports (Interfaces)
-┌────────────────────┴────────────────────────────────┐
-│            Application Layer                        │
-│  ┌──────────────────────────────────────────────┐  │
-│  │  Use Cases (Business Logic)                  │  │
-│  │  • GetApplicablePriceUseCase                 │  │
-│  │  • DTOs for data transfer                    │  │
-│  └──────────────────────────────────────────────┘  │
-└────────────────────┬────────────────────────────────┘
-                     │
-┌────────────────────┴────────────────────────────────┐
-│              Domain Layer                           │
-│  ┌──────────┐  ┌───────────────────────────────┐   │
-│  │ Entities │  │ Repository Ports (Interfaces) │   │
-│  │  • Price │  │  • PriceRepositoryPort        │   │
-│  └──────────┘  └───────────────────────────────┘   │
-│       Framework-Free | Pure Java | SOLID            │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   Infrastructure Layer                          │
+│  ┌──────────────┐  ┌────────────────┐  ┌──────────────────┐   │
+│  │  REST API    │  │   Database     │  │  Configuration   │   │
+│  │ (Controller) │  │  (JPA/H2)      │  │  (Spring Beans)  │   │
+│  └──────┬───────┘  └────────┬───────┘  └──────────────────┘   │
+│         │                   │                                   │
+└─────────┼───────────────────┼───────────────────────────────────┘
+          │                   │
+          │ uses              │ implements
+          ↓                   ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      Domain Layer (Ports)                       │
+│  ┌────────────────────────────┐  ┌─────────────────────────┐   │
+│  │   Input Ports (in/)        │  │  Output Ports (out/)    │   │
+│  │  • GetApplicablePricePort  │  │  • PriceRepositoryPort  │   │
+│  │    (what system offers)    │  │    (what system needs)  │   │
+│  └────────────┬───────────────┘  └─────────────┬───────────┘   │
+│               │                                 │               │
+│               │                                 │               │
+│  ┌────────────▼─────────────────────────────────▼───────────┐  │
+│  │                  Business Entities                        │  │
+│  │                    • Price                                │  │
+│  │           (business rules & validations)                  │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│            Framework-Free | Pure Java | SOLID                   │
+└─────────────────────────────────────────────────────────────────┘
+                              ↑
+                              │ implements
+                              │
+┌─────────────────────────────┴───────────────────────────────────┐
+│                     Application Layer                           │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              Use Case Implementation                      │  │
+│  │           GetApplicablePriceUseCase                       │  │
+│  │  (orchestrates domain logic using ports)                 │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                   DTOs                                    │  │
+│  │              PriceResponseDto                             │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Dependency Flow
+```
+Infrastructure → Domain (Ports) ← Application
+     ↓                                  ↓
+  Adapters                         Use Cases
 ```
 
 ### Key Architectural Decisions
 
 1. **Domain Layer**: Framework-free, contains business rules and entities
-    - No Spring annotations
-    - Validation in constructors
-    - Business logic methods (e.g., `isApplicableAt`, `hasHigherPriorityThan`)
+   - **Ports (Interfaces)**:
+      - `port/in/`: Input ports defining what the system offers (use cases)
+      - `port/out/`: Output ports defining what the system needs (repositories)
+   - **Entities**: Business objects with validation and behavior (`Price`)
+   - No Spring annotations, pure Java
 
 2. **Application Layer**: Orchestrates use cases
-    - No framework dependencies in use case classes
-    - DTOs for external communication
-    - Input validation with `Objects.requireNonNull()`
+   - Implements input ports (`GetApplicablePricePort`)
+   - Uses output ports (`PriceRepositoryPort`)
+   - DTOs for external communication
+   - Input validation with `Objects.requireNonNull()`
 
 3. **Infrastructure Layer**: Framework-specific implementations
-    - REST controllers with Spring annotations
-    - JPA entities and repositories
-    - MapStruct for entity-domain mapping
-    - Spring configuration beans
+   - REST controllers using input ports
+   - Adapters implementing output ports
+   - JPA entities and repositories
+   - MapStruct for entity-domain mapping
+   - Spring configuration beans
 
 4. **Dependency Rule**: Dependencies always point inward
-    - Infrastructure → Application → Domain
-    - Never the reverse
+   - Infrastructure → Application → Domain
+   - Never the reverse (Dependency Inversion Principle)
+
+---
+
+## 🔄 Request Flow Example
+```
+1. HTTP Request
+   ↓
+2. PriceController (Infrastructure)
+   │ uses
+   ↓
+3. GetApplicablePricePort (Domain - Input Port) ←──┐
+   │ implemented by                                 │
+   ↓                                                │ Dependency
+4. GetApplicablePriceUseCase (Application)          │ Inversion
+   │ uses                                           │
+   ↓                                                │
+5. PriceRepositoryPort (Domain - Output Port) ←─────┘
+   │ implemented by
+   ↓
+6. PriceRepositoryAdapter (Infrastructure)
+   │ uses
+   ↓
+7. PriceJpaRepository (Infrastructure)
+   ↓
+8. H2 Database
+```
 
 ---
 
@@ -203,13 +258,16 @@ technical-test-backend/
 │   │   │   ├── domain/
 │   │   │   │   ├── model/
 │   │   │   │   │   └── Price.java              # Domain entity
-│   │   │   │   └── port/out/
-│   │   │   │       └── PriceRepositoryPort.java # Repository interface
+│   │   │   │   └── port/
+│   │   │   │       ├── in/
+│   │   │   │       │   └── GetApplicablePricePort.java  # Input port
+│   │   │   │       └── out/
+│   │   │   │           └── PriceRepositoryPort.java     # Output port
 │   │   │   ├── application/
 │   │   │   │   ├── dto/
 │   │   │   │   │   └── PriceResponseDto.java   # Response DTO
 │   │   │   │   └── service/
-│   │   │   │       └── GetApplicablePriceUseCase.java
+│   │   │   │       └── GetApplicablePriceUseCase.java   # Use case impl
 │   │   │   └── infrastructure/
 │   │   │       ├── api/
 │   │   │       │   └── PriceController.java     # REST controller
@@ -228,7 +286,7 @@ technical-test-backend/
 │   │   └── resources/
 │   │       ├── application.yml                  # Configuration
 │   │       └── data.sql                         # Initial data
-│   └── test/                                    # 35+ tests
+│   └── test/                                    # 45+ tests
 │       └── java/com/technicaltest/backend/
 │           ├── domain/model/                    # Domain tests
 │           ├── application/service/             # Use case tests
@@ -288,6 +346,7 @@ Types:
 feat: add REST controller for price queries
 test: add integration tests for 5 required cases
 docs: add Postman collection with automated tests
+refactor: add input port interface for hexagonal architecture compliance
 ```
 
 ---
